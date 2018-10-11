@@ -1,0 +1,45 @@
+
+目的：
+    增量拷贝某个文件夹的内容到目标文件夹
+
+
+产生原因：
+    乱舞开发的时候经常会把trunk的资源拷贝到android打包工程下
+    这个工具会把变动过的文件 拷贝到指定目录，而不是每次都拷贝所有的文件
+
+参数：
+    -s src_dir
+        源目录， 示例为 xxx
+
+    -d dst_dir
+        目标目录, 示例为 ios
+
+    -f incr_file
+        用来记录源文件信息的文件
+
+    --svn
+        拷贝完成后是否 执行svn添加和提交操作
+
+原理说明：
+    incr_file 里记录的是 xxx 下文件的修改时间，
+    1. 如果修改时间发生了变动（无论是向前还是向后），就会认定为新文件
+    2. 如果目标文件不存在，也按新文件处理    （ADD）
+    3. 在拷贝完成后 会更新 incr_file 文件
+    
+    *. --svn 的说明： 如果发生了 (ADD) 标记的事件， 会先调用 svn的添加操作，然后调用提交操作
+    
+    例：
+        可以运行下 copy_from_xxx_to_ios.bat
+        然后修改 xxx 下面任意文件
+        再运行 copy_from_xxx_to_ios.bat
+        第二次只会拷贝你改过的文件
+
+乱舞的做法：
+    每个 源-目标 建立一个 .bat
+    比如
+        ic_res2adr.bat -> trunk 资源拷贝到android打包目录
+        ic_res2ios.bat -> trunk 资源拷贝到ios打包目录
+        
+其他说明：
+    copy_from_xxx_to_ios.bat 里面的 “-f %~n0”
+    %~n0 代表 .bat 这个文件的文件名字 copy_from_xxx_to_ios

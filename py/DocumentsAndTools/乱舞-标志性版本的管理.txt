@@ -1,0 +1,86 @@
+
+
+标志性版本的管理
+
+--
+-- 示例工程：见 https://192.168.50.51/svn/13yao/Game/TheThreeKingdoms.tag
+--
+
+理念：
+    创建、维护可工作的版本副本
+
+原则：
+    这个工作副本'一定'可以和线上的版本相匹配、或者可追溯（例如svn）
+    包括但不限于
+        C++
+        lua
+        图像资源
+        动画资源
+        配置资源
+        数据资源
+        ui源文件
+        数据库源文件
+        等等
+
+说明：
+    从源码、原始资源，通过工具的加工、加密、打包，
+    最终能够生成可发布的游戏包
+    即可工作的版本副本包含：
+        源码（lua，C++）
+        原始资源（table，png，ccb）
+        发布工具
+        （暂时未保留原始 spx）
+
+具体内容：
+  1. 目录结构
+      root
+        ├─cocosbuilder
+        │  │      bf_110_zh.ccbproj
+        │  └─sources
+        │          **.ccb
+        │
+        ├─design
+        │  │  client_story_id.csv
+        │  │  client_table_msg.csv
+        │  │  client_task_Allid.csv
+        │  │  VALUE_DB.db
+        │  │
+        │  ├─story
+        │  │  story_**.lua
+        │  │
+        │  └─task
+        │     task_**.lua
+        │
+        └─resources
+            │  aonesdk.json
+            │  debug.ini
+            │  gcps.lua
+            │  lang.ini
+            │  list.csv
+            │  ssof
+            │  version
+            │
+            ├─ccbi
+            ├─ccbResources
+            ├─sdk
+            ├─shader
+            ├─sound
+            ├─spine
+            └─table
+  2. 说明
+    cocosbuilder 用来存放
+        a) cocosbuilder用的 **.ccb 源文件
+        b) cocosbuilder用的 工程文件 **.ccbproj
+        c) '不'包含 图片等资源文件
+
+    design 用来存放
+        a) 数据库文件 VALUE_DB.db
+        b) 策划用的剧情、任务脚本
+
+    resources 用来存放
+        a) 打包用的原始文件（未加密）
+
+
+  3. 注意事项
+    cocosbuilder里的工程需要重新设置一下才可以使用
+

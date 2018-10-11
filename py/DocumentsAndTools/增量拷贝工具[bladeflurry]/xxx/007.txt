@@ -1,0 +1,4 @@
+
+call %~dp0\0000x0000.bat
+
+start /D %work_dir% %exec_dir%\TheThreeKingdoms.vc2012.exe 1024 768

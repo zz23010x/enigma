@@ -1,0 +1,97 @@
+添加TPush和TalkingData
+1.需要添加到清单文件的：
+<!-- =====================================我是分割线======================================== -->
+
+<!-- 【必须】 信鸽SDK所需权限 -->
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+<uses-permission android:name="android.permission.RESTART_PACKAGES" />
+<uses-permission android:name="android.permission.BROADCAST_STICKY" />
+<uses-permission android:name="android.permission.WRITE_SETTINGS" />
+<uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
+<uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+<uses-permission android:name="android.permission.GET_TASKS" />
+<uses-permission android:name="android.permission.READ_LOGS" />
+<uses-permission android:name="android.permission.VIBRATE" />
+<!-- 【可选】 信鸽SDK所需权限 -->
+<uses-permission android:name="android.permission.BLUETOOTH" />
+<uses-permission android:name="android.permission.BATTERY_STATS" />
+
+<receiver
+   android:name="com.tencent.android.tpush.XGPushReceiver"
+   android:process=":xg_service_v2" >
+    <intent-filter android:priority="0x7fffffff" >
+        <action android:name="com.tencent.android.tpush.action.SDK" />
+        <action android:name="com.tencent.android.tpush.action.INTERNAL_PUSH_MESSAGE" />
+        <action android:name="android.intent.action.USER_PRESENT" />
+        <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+        <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
+        <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+        <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+    </intent-filter>
+</receiver>
+
+<activity
+    android:name="com.tencent.android.tpush.XGPushActivity"
+    android:exported="true" >
+     <intent-filter>
+        <!-- 若使用AndroidStudio设置android:name="android.intent.action"-->
+        <action android:name="" />
+     </intent-filter>
+</activity>
+
+<service
+   android:name="com.tencent.android.tpush.service.XGPushService"
+   android:exported="true"
+   android:persistent="true"
+   android:process=":xg_service_v2" />
+
+<service
+   android:name="com.tencent.android.tpush.rpc.XGRemoteService"
+   android:exported="true" >
+    <intent-filter>
+ <!-- 包名.PUSH_ACTION -->
+        <action android:name="YOUR_PACKAGE_NAME.PUSH_ACTION" />
+    </intent-filter>
+</service>
+
+<!-- AccessId，21开头的10位数字，中间没空格 -->
+<meta-data 
+   android:name="XG_V2_ACCESS_ID"
+   android:value="2100159455" />
+<!-- AccessKey，A开头的12位字符串，中间没空格 -->
+<meta-data 
+   android:name="XG_V2_ACCESS_KEY" 
+   android:value="A39PD7B73XLI" />
+
+<receiver android:name="com.tendcloud.appcpa.ReferralReceiver" android:exported="true">
+    <intent-filter>
+    <action android:name="com.android.vending.INSTALL_REFERRER" />
+    </intent-filter>
+</receiver>
+
+<!-- =====================================我是分割线======================================== -->
+
+2.需要添加到uuSdkConfig.json的：
+...
+    "defaultPushSdk": "PushTpush",
+    "defaultAnalyticsSdk": "AnalyticsTalkingdata",
+    "sdks": [
+...
+        {
+            "name": "PushTpush",
+            "type": "push",
+            "init_params": {
+                "DebugMode": "false"
+            }
+        },
+        {
+            "name": "AnalyticsTalkingdata",
+            "type": "analytics"
+        }
+...
