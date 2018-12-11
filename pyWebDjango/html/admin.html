@@ -1,0 +1,30 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>admin</title>
+        <meta charset="utf-8">
+        <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+        <script>
+            $(document).ready(function(){
+                $("#ClearDataBase").click(function(){
+                    $.ajax({
+                        url:'ClearDataBase',
+                    })              
+                })
+                $("#UpdateJobZhilian").click(function(){
+                    $.ajax({
+                        type:'get',
+                        url:'UpdateJobs',
+                        success: function(data){
+                            console.log(data)
+                        }
+                    })
+                })
+            })
+        </script>
+    </head>
+    <body>
+        <button id='ClearDataBase'>清空数据库</button>
+        <button id='UpdateJobZhilian'>更新智联招聘</button>
+    </body>
+</html>

@@ -1,0 +1,255 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>sou</title>
+        <meta charset="utf-8">
+        <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+        <script src="{% static 'js/jquery-easyui-1.6.3/jquery.easyui.min.js' %}"></script>
+        <script src="{% static 'js/jquery-easyui-1.6.3/plugins/jquery.tooltip.js' %}"></script>
+        <script src="{% static 'js/jquery-easyui-1.6.3/datagrid-filter.js' %}"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'js/jquery-easyui-1.6.3/themes/default/easyui.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'js/jquery-easyui-1.6.3/themes/icon.css' %}">
+        <script>
+            var SourceData
+            var defaultOpt = {
+                filterBtnIconCls: 'icon-filter',
+                title:"",
+                striped: true,//斑马线
+                rownumbers: true,//增加一个行号
+                pagination: true,//显示分页工具
+                singleSelect: false,//只能选中一行
+                idField: 'ID',//唯一标识的字段
+                sortName: 'ID',//定义哪些列可以进行排序。
+                sortOrder: 'desc',//列排序顺序
+                fitColumns: true, //列自适应
+                remoteSort: false, //是否从服务器排序数据
+                pageSize: 100,
+                pageList: [20, 40, 60, 80, 100],
+                toolbar: '#toolbar',
+                frozenColumns: [[{
+                    field: 'ck',
+                    checkbox: true,
+                }]],
+                onLoadSuccess: function (data) {
+                    parent.$.messager.progress('close')
+                    $(".easyui-tooltip").tooltip()
+                }
+            }
+
+            var defaultCol = {columns:[[
+                {field:'ID', title:'ID', align:'center', width:'5%'},
+                {field:'jobName', title:'标题名', align:'center'},
+                {field:'company_logo', title:'LOGO', align:'center', formatter: function(value, row){
+                    return '<a href="http://' + row['company_url'] + '" target="_black"><img src="' + value + '" style="height:50px;width:50px"></a>'
+                }},
+                {field:'company_name', title:'公司', align:'center', formatter: function(value, row){
+                    return '<span title="' + row['company_size'] + '">' + value + '</span>'
+                }},
+                {field:'work_address', title:'工作地址', align:'center', formatter: function(value, row){
+                    return '<span title="' + row['company_address'] + '">' + value + '</span>'
+                }},
+                {field:'welfare', title:'职位福利', align:'center'},
+                {field:'moneyMin', title:'工资下限', align:'center', sortable:true},
+                {field:'moneyMax', title:'工资上限', align:'center', sortable:true},
+                {field:'eduLevel', title:'学历', align:'center'},
+                {field:'jobInfo', title:'职位描述', align:'center', width:"10%", formatter: function(value){
+                    return '<span title="' + value + '">' + value + '</span>'
+                }},
+                {field:'workInfo', title:'公司概括', align:'center', width:"10%", formatter: function(value, row){
+                    return '<span title="' + value + '">' + value + '</span>'
+                }},
+                {field:'updateDate', title:'时间', align:'center', sortable:true},
+                {field:'positionURL', title:'超链接', align:'center'},
+            ]]}
+
+            // 1) field：需要定义规则的域。
+            // 2) type：过滤类型，可能的值：label、text、textarea、checkbox、numberbox、validatebox、datebox、combobox、combotree。
+            // 3) options：过滤类型的选项。
+            // 4) op：过滤操作，可能的值：contains、equal、notequal、beginwith、endwith、less、lessorequal、greater、greaterorequal。     
+            // min 	数字 	文本框中可允许的最小值 	null
+            // max 	数字 	文本框中可允许的最大值 	null
+            // precision 	数字 	最高可精确到小数点后几位 	0     
+            var defaultFilter = [
+                {
+                    field: 'ID',
+                    type: 'label'
+                },
+                {
+                    field: 'company_logo',
+                    type: 'label'
+                },
+                {
+                    field: 'company_name',
+                    type: 'label'
+                },
+                {
+                    field: 'work_address',
+                    type: 'label'
+                },
+                {
+                    field: 'moneyMin',
+                    type:'numberbox',
+                    options: { precision: 0},
+                    op: ['lessorequal', 'greaterorequal']
+                },
+                {
+                    field: 'moneyMax',
+                    type:'numberbox',
+                    options: { precision: 0},
+                    op: ['lessorequal', 'greaterorequal']
+                },
+                {
+                    field: 'jobInfo',
+                    type: 'label'
+                },
+                {
+                    field: 'workInfo',
+                    type: 'label'
+                },
+                {
+                    field: 'updateDate',
+                    type:'datebox',
+                    options: {
+                        onChange: function(value){
+                            // console.log($(this)[0])
+                            // var sel_date = value.split('/')
+                            // if (sel_date.length > 2){
+                            //     value = (sel_date[2] + '-' + sel_date[0] + '-' + sel_date[1])
+                            //     return value
+                            // }
+                        }
+                    },
+                    op: ['less', 'greater']
+                },
+                {
+                    field: 'positionURL',
+                    type: 'label'
+                },
+            ]
+
+            function getWidth(percent){  
+                return $(window).width() * percent;  
+            }
+
+            function Bind(data){
+                $("#divShowData").datagrid('loadData', data)
+            }
+            
+            $(document).ready(function(){
+                $("#divShowData").datagrid(defaultOpt)
+                $('#divShowData').datagrid(defaultCol)
+                $("#divShowData").datagrid('enableFilter', defaultFilter)
+
+                $(window).resize(function(){  
+                    $("#divShowData").datagrid("resize",{width:getWidth(1)});  
+                });  
+
+                $("#sel").click(function(){
+                    $.ajax({
+                        type:'get',
+                        url:'Queryjob',
+                        data: {
+                            "job":$("#job").val(),
+                            'money_interval':$("#money_interval").val(),
+                            "count":$("#count").val(),
+                        },
+                        success: function(data){
+                            // console.log(data)
+                            SourceData = data
+                            Bind(data)
+                            alert('datas ok')
+                        }
+                    })
+                })
+
+                $("#open_link").click(function(){
+                    var rows = $("#divShowData").datagrid('getSelections')
+                    for (var i in rows){
+                        window.open(rows[i].positionURL)
+                    }
+                })
+
+                $("#filter").click(function(){
+                    // var rows = $("#divShowData").datagrid('getRows')
+                    var keyword = $.trim($("#green_channel").val())
+                    var block_words = $("#block_job").val().split(' ')
+                    var black_list = $("#block_company").val().split(' ')
+                    var white_list = $("#white_list").val().split(' ')
+                    // console.log(keyword, block_words, black_list)
+                    var newData = []
+                    for (var sdi in SourceData){
+                        var isFilter = true
+                        var row = SourceData[sdi]
+                        if (row['jobName'].indexOf(keyword) == -1){
+                            isFilter = false
+                        }
+
+                        if (isFilter && $.trim($("#block_job").val()) != ''){
+                            for (var bwj in block_words){
+                                if (row['jobName'].indexOf(block_words[bwj]) != -1){
+                                    isFilter = false
+                                    // console.log(row['jobName'], block_words[bwj])
+                                    break
+                                }
+                            }
+                        }
+
+                        if (isFilter && $.trim($("#block_company").val()) != ''){
+                            for (var blj in black_list){
+                                if (row['company_name'].indexOf(black_list[blj]) != -1){
+                                    isFilter = false
+                                    // console.log(row['company_name'], black_list[blj])
+                                    break
+                                }
+                            }                            
+                        }
+
+                        if (isFilter && $.trim($("#white_list").val()) != ''){
+                            var address
+                            if (row['work_address'].length > row['company_address'].length){
+                                address = row['work_address']
+                            }else{
+                                address = row['company_address']
+                            }
+                            for (var wlj in white_list){
+                                if (address.indexOf(white_list[wlj]) == -1){
+                                    isFilter = false
+                                }else{
+                                    isFilter = true
+                                    break
+                                }
+                            }
+                        }
+
+                        if (isFilter){
+                            newData.push(row)
+                        }
+                    }
+                    // console.log(newData)
+                    Bind(newData)
+                })
+            })
+        </script>
+    </head>
+    <body>
+        JobName<input id="job" type="text">
+        MoneyInterval<select id="money_interval" type="down">
+            <option value="1,10000">全部</option>            
+            <option value="6001,8000">6K-8K</option>
+            <option value="8001,10000">8K-10K</option>
+            <option value="10001,15000">10K-15K</option>
+            <option value="15001,25000">15K-25K</option>
+            <option value="25001,35000">25K-35K</option>
+        </select>
+        Count<input id="count" type="text">
+        <button id="sel">查询</button>
+        <button id="selConditional">条件查询</button>
+        <button id="open_link">打开职位链接</button><br>
+        Keyword<input id="green_channel" type="text">
+        WorkAddress<input id="white_list" type="text">
+        BlockJob<input id="block_job" type="text">
+        BlockCompany<input id="block_company" type="text">
+        <button id="filter">筛选</button>
+        <div id="divShowData"></div>
+    </body>
+</html>
