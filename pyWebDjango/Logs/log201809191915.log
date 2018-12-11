@@ -1,2 +1,0 @@
-[2018-09-19 19:15:42,057]-[urls.py]-[line:33]-[<module>]-[WARNING]: [include failed]-[corsheaders.views]-[No module named 'corsheaders.views']
-[2018-09-19 19:15:42,058]-[urls.py]-[line:33]-[<module>]-[WARNING]: [include failed]-[CacheHelper.views]-[No module named 'CacheHelper']

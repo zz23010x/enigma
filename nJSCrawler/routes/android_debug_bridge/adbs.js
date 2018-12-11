@@ -110,7 +110,7 @@ router.get('/ScreenShots', function(req, res, next){
     'adb shell screencap -p /sdcard/' + file_name + ' && adb pull /sdcard/' + file_name + ' ' + req.query.filepath + ' && adb shell rm -f /sdcard/' + file_name,
     function(err, data, stderr){
       res.header("Access-Control-Allow-Origin", "*");
-      res.send(err)
+      res.send(req.query.filepath + '/' + file_name)
     }
   );
 });

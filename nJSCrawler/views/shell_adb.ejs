@@ -59,6 +59,17 @@
               url: "/ADBS/ScreenShots?filepath=" + $('#txtFilePath').val(),
               success: function (data, textStatus, jqXHR) {
                 console.log(data)
+                $('#imgPreview').attr('src', data)
+                let ori_height = $('#imgPreview').height()
+                let ori_width = $('#imgPreview').width()
+                $('#imgPreview').mouseover(function(){
+                  $('#imgPreview').height(ori_height)
+                  $('#imgPreview').width(ori_width)
+                })
+                $('#imgPreview').mouseout(function(){
+                  $('#imgPreview').height(ori_height/10)
+                  $('#imgPreview').width(ori_width/10)
+                })
               },
             })
           })
@@ -75,7 +86,7 @@
       <textarea id="taContent">15911092097</textarea><button id="btnInputText">输入信息</button>
       <br>
       存放目录<input id="txtFilePath" type="text" value="c:/Users/" ><button id="btnScreenShots">截屏</button>
-      <br>
+      <img id="imgPreview"><br>
       <input name="product" type="radio" value='1' checked="checked">People's Daily
       <input name="product" type="radio" value='2'>Reader
       <button id="btnOpenDownloadUrl">蒲公英下载地址</button>

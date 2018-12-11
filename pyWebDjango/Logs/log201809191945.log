@@ -1,7 +1,0 @@
-[2018-09-19 19:45:49,785]-[urls.py]-[line:33]-[<module>]-[WARNING]: [include failed]-[corsheaders.views]-[No module named 'corsheaders.views']
-[2018-09-19 19:45:49,786]-[urls.py]-[line:33]-[<module>]-[WARNING]: [include failed]-[CacheHelper.views]-[No module named 'CacheHelper']
-[2018-09-19 19:45:50,014]-[urls.py]-[line:33]-[<module>]-[WARNING]: [include failed]-[shop.views]-[__init__() takes 0 positional arguments but 1 was given]
-[2018-09-19 19:45:50,250]-[WareHelper.py]-[line:6]-[process_request]-[INFO]: [localhost]-[/index/]-[GET]
-[2018-09-19 19:45:52,784]-[WareHelper.py]-[line:15]-[process_response]-[INFO]: [localhost]-[/index/]-[200]
-[2018-09-19 19:45:52,817]-[WareHelper.py]-[line:6]-[process_request]-[INFO]: [localhost]-[/favicon.ico]-[GET]
-[2018-09-19 19:45:52,825]-[WareHelper.py]-[line:15]-[process_response]-[INFO]: [localhost]-[/favicon.ico]-[404]

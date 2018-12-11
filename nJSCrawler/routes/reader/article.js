@@ -5,6 +5,7 @@ class article{
   constructor(){
     this.author = '这是一个作者'
     this.content = '这是一个编辑内容'
+    this.contentWithHTML = ''
     this.contentNum = (parseInt(Math.random()*99)+1).toString();
     this.introduction = '这是一个摘要'
     this.origin = '这是一个来源'
@@ -50,6 +51,7 @@ class article{
     }
     this.content = $('div.detail_con').eq(0).html()
     // this.content = $('div.detail_con').eq(0).text()
+    this.contentWithHTML = $('div.detail_con').eq(0).html()
 
     if (this.author === undefined) {
       console.log('error..author is undefined.' + url)

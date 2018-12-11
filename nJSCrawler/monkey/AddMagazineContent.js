@@ -29,9 +29,9 @@ var $ = window.jQuery;
     }
 
     CreateSideTools()
-    if (window.location.href.indexOf(FunctionPage.ADDMAGAZINECONTENT) != -1){
-        AddMagazineContent()
-    }
+    // if (window.location.href.indexOf(FunctionPage.ADDMAGAZINECONTENT) != -1){
+    AddMagazineContent()
+    // }
 })();
 
 function AddMagazineContent(){
