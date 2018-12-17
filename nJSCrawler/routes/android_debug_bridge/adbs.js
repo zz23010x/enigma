@@ -23,7 +23,12 @@ var pgyer = {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('shell_adb');
+  cmd.get(
+    'echo %username%',
+    function(err, data, stderr){
+      res.render('shell_adb', { winuser: 'c:\\Users\\' + data + '\\Desktop'});
+    }
+  );
 });
 
 router.get('/keyboard_input', function(req, res, next){
