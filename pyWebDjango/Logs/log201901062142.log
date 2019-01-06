@@ -1,8 +1,0 @@
-[2019-01-06 21:42:27,158]-[urls.py]-[line:33]-[<module>]-[WARNING]: [include failed]-[corsheaders.views]-[No module named 'corsheaders.views']
-[2019-01-06 21:42:27,159]-[urls.py]-[line:33]-[<module>]-[WARNING]: [include failed]-[CacheHelper.views]-[No module named 'CacheHelper']
-[2019-01-06 21:42:28,434]-[WareHelper.py]-[line:6]-[process_request]-[INFO]: [localhost]-[/index/]-[GET]
-[2019-01-06 21:42:28,446]-[WareHelper.py]-[line:15]-[process_response]-[INFO]: [localhost]-[/index/]-[200]
-[2019-01-06 21:42:54,531]-[urls.py]-[line:33]-[<module>]-[WARNING]: [include failed]-[corsheaders.views]-[No module named 'corsheaders.views']
-[2019-01-06 21:42:54,533]-[urls.py]-[line:33]-[<module>]-[WARNING]: [include failed]-[CacheHelper.views]-[No module named 'CacheHelper']
-[2019-01-06 21:42:56,873]-[WareHelper.py]-[line:6]-[process_request]-[INFO]: [localhost]-[/index/]-[GET]
-[2019-01-06 21:42:56,885]-[WareHelper.py]-[line:15]-[process_response]-[INFO]: [localhost]-[/index/]-[200]
