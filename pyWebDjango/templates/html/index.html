@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <title>index</title>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <ul>
+            {% for cate, data in data.items %}
+            <li>{{cate}}
+                <ul>
+                    {% for item in data %}
+                    <li><a href="/{{item.url}}">{{item.name}}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li>Guild Wars2</li>
+            <ul>
+                <!-- <li><a href="asset/QueryItemsGw2.html">激战2物品查询</a></li> -->
+                <li><a href="{% static 'script/staticGW2/src/QuerySkillsGw2.html' %}">激战2技能查询</a></li>
+                <li><a href="{% static 'script/staticGW2/src/QueryItemstatsGw2.html' %}">激战2属性查询</a></li>
+                <!-- <li><a href="asset/QueryRecipesGw2.html">激战2配方查询</a></li> -->
+                <li><a href="https://wiki.guildwars2.com/wiki/Rune">激战2全符文</a></li>
+            </ul>
+            {% endfor %}
+        </ul>
+    </body>
+</html>

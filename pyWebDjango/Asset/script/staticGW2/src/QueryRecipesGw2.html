@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="../asset/js/jquery-3.0.0.js" ></script>
+    <script type="text/javascript" src="../asset/js/jquery.form.js" ></script>
+    <script type="text/javascript" src="../asset/common/user-defined.js" ></script>
+    <script type="text/javascript" src="../asset/common/api.guildwars2.js" ></script>
+    <script type="text/javascript" src="../dep/jPages/js/jPages.min.js"></script>
+    <style type="text/css">
+    	.wrap_div{
+            position:fixed;
+            height:40px;
+            width:40px;
+            right:0px;
+            bottom:0px;
+    	}
+        .oneline{
+            overflow:hidden;
+            white-space:nowrap;
+            text-overflow:ellipsis;
+        }
+		.holder {
+			margin: 15px 0;
+		}
+		.holder a {
+			font-size: 12px;
+			cursor: pointer;
+			margin: 0 5px;
+			color: #333;
+		}
+		.holder a:hover {
+			background-color: #222;
+			color: #fff;
+		}
+			.holder a.jp-previous { margin-right: 15px; }
+			.holder a.jp-next { margin-left: 15px; }
+			.holder a.jp-current, a.jp-current:hover {
+			color: #FF4242;
+			font-weight: bold;
+		}
+		.holder a.jp-disabled, a.jp-disabled:hover {
+			color: #bbb;
+		}
+		.holder a.jp-current, a.jp-current:hover,
+		.holder a.jp-disabled, a.jp-disabled:hover {
+			cursor: default;
+			background: none;
+		}
+	  	.holder span { margin: 0 5px; }
+    </style>
+    <script type="text/javascript">
+        var gwRecipes = new Gw2Recipe()
+        var production_recipes = null
+
+        $(document).ready(function(){
+            gwRecipes.UpdateAPI()
+            for (var i in Gw2Production){
+                $("#filter_production").append('<div style="float:left;"><input name="ckbProduction" type="checkbox" value="' + i + '">' + Gw2Production[i] + '</div>')
+            }
+
+            $("#btnAjaxQueryByName").click(function () {
+                var result = {}
+                if ($("#filter_name").val() == ""){
+                    return 
+                }
+
+                if (objCalcNumber(production_recipes) == 0){
+                    production_recipes = gwRecipes.Gw2Recipes
+                }
+
+                for (var key in production_recipes){
+                    if (Gw2ItemsZH.hasOwnProperty(production_recipes[key].output_item_id) && Gw2ItemsZH[production_recipes[key].output_item_id].name.indexOf($("#filter_name").val()) != -1){
+                        result[key] = production_recipes[key]
+                    }
+                }
+                ShowResult(result)
+            });
+
+            $("input[name=ckbProduction][type=checkbox]").change(function(){
+                var production_lsit = []
+                $("input[name=ckbProduction][type=checkbox]:checked").each(function(){
+                    production_lsit.push($(this).val())
+                })
+                production_recipes = gwRecipes.FindRecpiesByProfession(production_lsit)
+                ShowResult(production_recipes)
+            })
+        })
+
+        function ShowResult(show_data){
+            $("#divRecipes").empty()
+            for(var i in show_data){
+                $("#divRecipes").append(MakeDiv(show_data[i]))
+            }
+
+            $("div.holder").jPages({
+                containerID  : "divRecipes",
+                first: 'Frist',
+                last: 'End',
+                previous: '←',
+                next: '→',
+                perPage: 50,
+                startPage: 1,
+                startRange: 2,
+                midRange: 5,
+                endRange: 2,
+                animation: 'wobble',
+                keyBrowse: true
+            })
+
+            armoryRefresh()
+        }
+
+        function MakeDiv(item){
+            var innerHTML = ""
+            var disciplines = item.disciplines.map(function(e){return Gw2Production[e]})
+
+            innerHTML += '<div style="clear:both">'
+            innerHTML += '<div style="float:left" data-armory-embed="items" data-armory-ids="' + item.output_item_id + '"></div><div style="float:left"> x ' + item.output_item_count + ' = </div>'
+            
+            for (var index_ingred in item.ingredients){
+                innerHTML += '<div style="float:left" data-armory-embed="items" data-armory-ids="' + item.ingredients[index_ingred].item_id + '"></div><div style="float:left"> x ' + item.ingredients[index_ingred].count + '</div>'
+            }
+            innerHTML += '<div style="float:right">' + disciplines.join('|')  + '</div>'
+            innerHTML += '</div>'
+
+        	return innerHTML
+        }
+
+        function armoryRefresh(){
+            document.GW2A_EMBED_OPTIONS = {
+              lang: 'zh',
+              persistToLocalStorage: false,
+            };
+            const scriptPath = window.location.search.includes('prod')
+            ? 'https://unpkg.com/armory-embeds@^0.x.x/armory-embeds.js'
+            : '../asset/common/armory-embeds.js';
+
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/armory-embeds@^0.x.x/armory-embeds.js';
+            script.async = true;
+            document.body.appendChild(script);
+        }
+
+        function ShowPlaceholder(){
+            gwRecipes.MergeInfo()
+            if (gwRecipes.Gw2RecipeIds.length == gwRecipes.GetItemsCount() && gwRecipes.Gw2RecipeIds.length != 0){
+                clearInterval(interval)
+                var gwItem = new Gw2Item()
+                gwItem.GetItemInfoByIds(gwRecipes.GwRecipeOutPutIds)
+            }
+        }
+
+        var interval = setInterval(ShowPlaceholder, 1000)
+    </script>
+</head>
+<body>
+	<div class="wrap_div"><a href="javascript:scroll(0,0)">top</a></div>
+    <div>
+        <input id="filter_name" type="text"><button id="btnAjaxQueryByName">检索</button>
+        <div id="filter_production"></div>
+    </div>
+    <div id="divRecipes" style="clear:both;width: 100%"></div>
+    <div style="clear: both" class="holder"></div>
+</body>
+</html>

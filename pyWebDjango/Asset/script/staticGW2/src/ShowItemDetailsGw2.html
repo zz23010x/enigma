@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="../asset/js/jquery-3.0.0.js" ></script>
+	<script type="text/javascript" src="../asset/common/user-defined.js" ></script>
+
+	<script type="text/javascript">
+        $(document).ready(function () {
+            var item_id = getQueryString("id");
+            var item_detail = SearchItemV2(item_id)
+            console.log(item_detail)
+        });
+
+        function SearchItemV2(id){
+        	var item_details
+    		$.ajax({
+        		async: false,
+		        type: "GET",
+		        data:{
+		            id : id,
+		            lang : "zh",
+		        },
+		        url: "https://api.guildwars2.com/v2/items",
+		        success: function (data) {
+		        	item_details = data
+		        },
+		    })
+
+		    $.ajax({
+        		async: false,
+		        type: "GET",
+		        data:{
+		            id : id,
+		            lang : "en",
+		        },
+		        url: "https://api.guildwars2.com/v2/items",
+		        success: function (data) {
+		        	item_details["NameEN"] = data.name
+		        }
+		    })
+
+		    return item_details
+		}
+	</script>
+</head>
+<body>
+    <div id="divItemDetails"></div>
+</body>
+</html>

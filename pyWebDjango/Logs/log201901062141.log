@@ -1,0 +1,8 @@
+[2019-01-06 21:41:58,843]-[urls.py]-[line:33]-[<module>]-[WARNING]: [include failed]-[corsheaders.views]-[No module named 'corsheaders.views']
+[2019-01-06 21:41:58,844]-[urls.py]-[line:33]-[<module>]-[WARNING]: [include failed]-[CacheHelper.views]-[No module named 'CacheHelper']
+[2019-01-06 21:42:00,322]-[WareHelper.py]-[line:6]-[process_request]-[INFO]: [localhost]-[/index/]-[GET]
+[2019-01-06 21:42:00,330]-[WareHelper.py]-[line:12]-[process_exception]-[ERROR]: [localhost]-[/index/]-[Invalid block tag on line 19: 'static', expected 'empty' or 'endfor'. Did you forget to register or load this tag?]
+[2019-01-06 21:42:00,532]-[WareHelper.py]-[line:15]-[process_response]-[INFO]: [localhost]-[/index/]-[500]
+[2019-01-06 21:42:02,095]-[WareHelper.py]-[line:6]-[process_request]-[INFO]: [localhost]-[/index/]-[GET]
+[2019-01-06 21:42:02,099]-[WareHelper.py]-[line:12]-[process_exception]-[ERROR]: [localhost]-[/index/]-[Invalid block tag on line 19: 'static', expected 'empty' or 'endfor'. Did you forget to register or load this tag?]
+[2019-01-06 21:42:02,266]-[WareHelper.py]-[line:15]-[process_response]-[INFO]: [localhost]-[/index/]-[500]

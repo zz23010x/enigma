@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="../asset/js/jquery-3.0.0.js" ></script>
+    <script type="text/javascript" src="../asset/js/jquery.form.js" ></script>
+    <script type="text/javascript" src="../asset/js/clipboard.js" ></script>
+    <script type="text/javascript" src="../asset/common/api.guildwars2.js" ></script>
+    <script type="text/javascript" src="../dep/jPages/js/jPages.min.js"></script>
+    <script type="text/javascript" src="../dep/jquery.qtip.custom/jquery.qtip.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../dep/jquery.qtip.custom/jquery.qtip.min.css">
+    <style type="text/css">
+    	.wrap_div{
+            position:fixed;
+            height:40px;
+            width:40px;
+            right:0px;
+            bottom:0px;
+    	}
+        .oneline{
+            overflow:hidden;
+            white-space:nowrap;
+            text-overflow:ellipsis;
+        }
+		.holder {
+			margin: 15px 0;
+		}
+		.holder a {
+			font-size: 12px;
+			cursor: pointer;
+			margin: 0 5px;
+			color: #333;
+		}
+		.holder a:hover {
+			background-color: #222;
+			color: #fff;
+		}
+			.holder a.jp-previous { margin-right: 15px; }
+			.holder a.jp-next { margin-left: 15px; }
+			.holder a.jp-current, a.jp-current:hover {
+			color: #FF4242;
+			font-weight: bold;
+		}
+		.holder a.jp-disabled, a.jp-disabled:hover {
+			color: #bbb;
+		}
+		.holder a.jp-current, a.jp-current:hover,
+		.holder a.jp-disabled, a.jp-disabled:hover {
+			cursor: default;
+			background: none;
+		}
+	  	.holder span { margin: 0 5px; }
+    </style>
+    <script type="text/javascript">
+        var gwItems = new Gw2Item()
+
+        $(document).ready(function(){
+        	gwItems.UpdateAPI()
+        	ShowPlaceholder()
+
+            $("#btnAjaxQueryByName").click(function () {
+                var FindResult = gwItems.FindItemsByName($("#txtItemName").val())
+                Bind(FindResult)
+            });
+        });
+
+        function Bind(ItemList){
+    		$("#divItems").empty()
+            $("#txtItemName").focus()
+            $("#txtItemName").val(null)
+            for (var i in ItemList){
+                $("#divItems").append(MakeDiv(ItemList[i]))
+
+                if (i+1%5 == 0){
+                    $("#divItems").append('<br style="clear:both">')
+                }
+            }
+
+            $('.tip1').each(function(){
+                $(this).qtip({
+                    content:{
+                        attr:'gw2tips'
+                    },
+                    position: {
+                        corner: {
+                            target: 'bottomMiddle', // 定位上面的链接工具提示
+                            tooltip: 'topMiddle'
+                        },
+                        adjust: {
+                            screen: true // 在任何时候都保持提示屏幕上的
+                        }
+                    },
+                    show: { 
+                        when: 'mouseover', //或click 
+                        solo: true // 一次只显示一个工具提示
+                    },
+                    hide: 'unfocus',
+                    style: {
+                        tip: true, // 设置一个语音气泡提示在指定工具提示角落的工具提示
+                        border: {
+                            width: 0,
+                            radius: 4
+                        },
+                        name: 'light', // 使用默认的淡样式
+                    }
+                })
+            })
+
+            $("div.holder").jPages({
+				containerID  : "divItems",
+				first: 'Frist',
+				last: 'End',
+				previous: '←',
+				next: '→',
+				perPage: 100,
+				startPage: 1,
+				startRange: 2,
+				midRange: 5,
+				endRange: 2,
+				animation: 'wobble',
+				keyBrowse: true
+			})
+            
+
+    	    var clipboard = new Clipboard('.chat_copy');
+        }
+
+        function MakeDiv(item){
+        	var innerHTML = ""
+        	var color = "#000"
+        	if (item.rarity == "Fine"){
+        		color = "#62A4DA"
+        	}        	
+        	else if (item.rarity == "Masterwork"){
+        		color = "#1a9306"
+        	}
+        	else if (item.rarity == "Rare"){
+        		color = "#fcd00b"
+        	}
+        	else if (item.rarity == "Exotic"){
+        		color = "#ffa405"
+        	}
+        	else if (item.rarity == "Ascended"){
+        		color = "#fb3e8d"
+        	}
+        	else if (item.rarity == "Legendary"){
+        		color = "#4C139D"
+        	}
+
+            innerHTML += '<div style="float:left;width:20%">'
+            innerHTML += '<div style="float:left" class="tip1" ' + MakeDivTips(item) + '><a href="ShowItemDetailsGw2.html?id=' + item.id + '" target="blank"><img style="width:60px" src="' + item.icon + '"></a></div>'
+            innerHTML += '<div class="oneline" style="color:' + color + '">' + item.name + '</div>'
+            innerHTML += '<div class="oneline"><a href="https://wiki.guildwars2.com/wiki/' + item.NameEN + '" target="blank" >' + item.NameEN + '</a></div>'
+            innerHTML += '<div class="oneline">' + item.chat_link + '<button class="chat_copy" data-clipboard-text="' + item.chat_link + '">复制</button></div>'
+            innerHTML += '</div>'
+
+        	return innerHTML
+        }
+
+        function MakeDivTips(item){
+            var innerHTML = ""
+            innerHTML += 'gw2tips=\''
+            innerHTML += '<div><ul style="list-style-type:none">'
+            innerHTML += '<li>' + item.type + '</li>'
+            if (item.description){
+                innerHTML += '<li>' + item.description + '</li>'
+            }
+            if (item.details){
+                if (item.details.bonuses){
+                    for (var i in item.details.bonuses){
+                        innerHTML += '<li>' + item.details.bonuses[i] + '</li>'
+                    }
+                }
+                if (item.details.infix_upgrade && item.details.infix_upgrade.buff){
+                    innerHTML += '<li>' + item.details.infix_upgrade.buff.description + '</li>'
+                }
+            }
+            innerHTML += '</ul></div>\''
+
+            return innerHTML
+        }
+
+        function ShowPlaceholder(){
+        	gwItems.MergeInfo()
+			$("#txtItemName").attr("placeholder", gwItems.GetItemsCount() + "/" + gwItems.Gw2ItemIds.length)
+			if (gwItems.Gw2ItemIds.length == gwItems.GetItemsCount() && gwItems.Gw2ItemIds.length !=0){
+				clearInterval(interval)
+			}
+        }
+
+        var interval = setInterval(ShowPlaceholder, 60000)
+    </script>
+</head>
+<body>
+	<div class="wrap_div"><a href="javascript:scroll(0,0)">top</a></div>
+    <input id="txtItemName" type="text">
+    <input id="btnAjaxQueryByName" type="button" value="查询">
+    <div id="divItems"></div>
+    <div style="clear: both" class="holder"></div>
+</body>
+</html>

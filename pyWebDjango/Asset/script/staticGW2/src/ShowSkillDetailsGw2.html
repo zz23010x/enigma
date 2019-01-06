@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="../asset/js/jquery-3.0.0.js" ></script>
+    <script type="text/javascript" src="../asset/js/jquery.form.js" ></script>
+    <script type="text/javascript" src="../asset/js/clipboard.js" ></script>
+    <script type="text/javascript" src="../asset/common/api.guildwars2.js" ></script>
+    <script type="text/javascript">
+        var gwSkills = new Gw2Skill()
+
+        $(document).ready(function(){
+            gwSkills.UpdateAPI()
+
+            $("#btnAjaxQuery").click(function () {
+                gwSkills.FindSkillsByProfession()
+                // var FindResult = gwItems.FindItemsByName($("#txtItemName").val())
+                $("#divSkills").empty()
+                $("#txtSkillName").focus()
+                $("#txtSkillName").val(null)
+                for (var i in Gw2SkillsZH){
+                    var val = Gw2SkillsZH[i]
+                    $("#divSkills").append('<div>')
+                    $("#divSkills").append('<div style="float:left"><a href="ShowSkillDetailsGw2.html?id=' + val.id + '" target="blank"><img src="' + val.icon + '"></a></div>')
+                    $("#divSkills").append(MakeDiv(val))
+                    $("#divSkills").append('<div>' + val.chat_link + '<button class="chat_copy" data-clipboard-text="' + val.chat_link + '">复制</button></div>')
+                    $("#divSkills").append('<br style="clear:both">')
+                    $("#divSkills").append('</div>')
+                }
+
+                var clipboard = new Clipboard('.chat_copy');
+            });
+        });
+
+        function MakeDiv(item){
+            var innerHTML
+            innerHTML = '<div>' + item.name + '</div>'
+
+            return innerHTML
+        }
+    </script>
+</head>
+<body>
+    <input id="txtSkillName" type="text">
+    <input id="btnAjaxQuery" type="button" value="查询">
+    <div id="divSkills"></div>
+</body>
+</html>
