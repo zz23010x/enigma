@@ -3,8 +3,8 @@ from django.urls import path
 
 # Create your views here.
 def index(request):
-    return render(request, 'sou.html')
+    return render(request, 'terminal_adb.html')
     
 urlpatterns = [
-    path('adbs', index),
+    path('adbt', index),
 ]
