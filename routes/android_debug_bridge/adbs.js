@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
   cmd.get(
     'echo %username%',
     function(err, data, stderr){
-      res.render('shell_adb', { winuser: 'c:\\Users\\' + data + '\\Desktop'});
+      res.render('terminal_adb', { winuser: 'c:\\Users\\' + data + '\\Desktop'});
     }
   );
 });
