@@ -1,1 +1,0 @@
-uuEncryptEasy.exe key=AONESOFT *.png

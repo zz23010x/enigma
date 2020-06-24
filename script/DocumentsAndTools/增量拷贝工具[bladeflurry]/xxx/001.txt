@@ -1,3 +1,0 @@
-
-set exec_dir=%~dp0\proj.win32\Debug.win32
-set work_dir=%~dp0\resources

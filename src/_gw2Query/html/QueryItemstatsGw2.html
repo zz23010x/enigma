@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="../../../js/jquery-3.2.1.min.js" ></script>
+    <script type="text/javascript" src="../../../js/jquery.form.js" ></script>
+    <script type="text/javascript" src="../../../js/user-defined.js" ></script>
+    <script type="text/javascript" src="../js/api.guildwars2.js" ></script>
+    <script type="text/javascript" src="../../datepicker/js/jquery.ui.core.js" ></script>
+    <script type="text/javascript" src="../../datepicker/js/jquery.ui.datepicker.js" ></script>
+    <script type="text/javascript" src="../../datepicker/js/jquery.ui.widget.js" ></script>
+    <script type="text/javascript" src="../../datepicker/js/jquery-migrate-1.0.0.js" ></script>
+    <!-- jqGrid插件包-必要 -->
+    <script type="text/javascript" src="../../jqgrid/js/jquery.jqGrid.min.js" ></script>
+    <!-- jqGrid插件的多语言包-非必要 -->
+    <script type="text/javascript" src="../../jqgrid/js/i18n/grid.locale-cn.js" ></script>
+    <!-- jqGrid组件基础样式包-必要 -->
+    <link rel="stylesheet" type="text/css" href="../../jqgrid/css/ui.jqgrid.css">
+    <!-- jqGrid主题包-非必要 --> 
+    <link rel="stylesheet" type="text/css" href="../../jqgrid/css/ui-lightness/jquery-ui-1.8.16.custom.css">
+    <link rel="stylesheet" type="text/css" href="../../datepicker/css/jquery.ui.datepicker.css">
+    <script type="text/javascript">
+        var gwItemstats = new Gw2Itemstats()
+        var ReverseSelection = []
+        var defaultOpt = {
+            filterBtnIconCls: 'icon-filter',
+            title:"",
+            striped: 'true',//斑马线
+            rownumbers: 'true',//增加一个行号
+            pagination: 'true',//显示分页工具
+            singleSelect: 'false',//只能选中一行
+            idField: 'id',//唯一标识的字段
+            sortName: 'id',//定义哪些列可以进行排序。
+            sortOrder: 'desc',//列排序顺序
+            fitColumns: true, //列自适应
+            pageSize: 40,
+            pageList: [20, 40, 60, 80, 100],
+            toolbar: '#toolbar',
+            frozenColumns: [[{
+                width: '50',
+                title: 'ID',
+                field: 'id',
+                sortable: false
+            }]],
+            onLoadSuccess: function (data) {
+                parent.$.messager.progress('close');
+            },
+            onHeaderContextMenu:function(e, field){
+                var showData = []
+                if (ReverseSelection.indexOf(field) == -1){
+                    ReverseSelection.push(field)
+                }else{
+                    ReverseSelection.splice(ReverseSelection.indexOf(field), 1)
+                }
+
+                if(showData.length==0){
+                    $("#divItemStats").datagrid('loadData', gwItemstats.OriginalData)
+                    $("#divItemStats").datagrid('load')
+                }
+
+                for(var i in gwItemstats.OriginalData){
+                    var res = true
+                    for(var j in ReverseSelection){
+                        if(!gwItemstats.OriginalData[i].hasOwnProperty(ReverseSelection[j])){
+                            res = false
+                        }
+                    }
+                    if(res){
+                        showData.push(gwItemstats.OriginalData[i])
+                    }
+                }
+
+                $("#divItemStats").datagrid('loadData', showData)
+            }
+        }
+        var defaultCol = [
+            {label:'ID', name:'id', width:"5%", align:'center'},
+            {label:'Name', name:'name', width:"20%", align:'center'},
+            {label:'Desc', name:'desc', width:"30%", align:'center'},
+        ]
+        var defaultFilter = [
+            {
+                field: 'id',
+                type: 'numberbox',
+                options: { precision: 0 },
+                op: ['equal', 'notequal']
+            }, {
+                field: 'name',
+                type: 'text',
+                options: { precision: 0 },
+                op: ['equal', 'notequal', 'contains']
+            }, {
+                field: 'desc',
+                type: 'text',
+                options: { precision: 0 },
+                op: ['contains']
+            }
+        ]
+
+        function Bind(data){
+            $("#divItemStats").jqGrid('clearGridData')
+            $("#divItemStats").jqGrid('setGridParam',{
+                datatype: 'local',
+                data: data,
+            }).trigger('reloadGrid')
+        }
+
+        $(document).ready(function(){
+            gwItemstats.UpdateAPI()
+            $(window).resize(function(){
+                $("#divItemStats").setGridWidth($(window).width())
+                $("#divItemStats").setGridHeight($(window).height()*0.8)
+            });  
+        })
+
+        function ShowPlaceholder(){
+            gwItemstats.MergeInfo()
+            if (gwItemstats.Gw2ItemstatIds.length == gwItemstats.GetItemsCount() && gwItemstats.Gw2ItemstatIds.length !=0){
+                clearInterval(interval)
+                var BindData = []
+                var ColName = []
+                var StatsName = []
+                for (var i in gwItemstats.Gw2Itemstats){
+                    if(Gw2ItemstatsZH[i].name != "" && StatsName.indexOf(gwItemstats.Gw2Itemstats[i].name) == -1){
+                        StatsName.push(gwItemstats.Gw2Itemstats[i].name)
+                        BindData.push(Gw2ItemstatsZH[i])
+                        for (var j in gwItemstats.Gw2Itemstats[i].attributes){
+                            var col = gwItemstats.Gw2Itemstats[i].attributes[j].attribute
+                            if (ColName.indexOf(col) == -1){
+                                ColName.push(col)
+                                defaultCol.push({label:Gw2Attribute[col], name:col, width:'5%', sorttype:'number', align:'center'})
+                                defaultFilter.push({field:col, type:'label'})
+                            }
+                        }
+                    }
+                }
+
+                gwItemstats.OriginalData = BindData
+                $("#divItemStats").jqGrid({
+                    // data:data,
+                    datatype: "local",
+                    colModel:defaultCol,
+                    height: $(window).height()*0.8,
+                    viewrecords: true,//是否在浏览导航栏显示记录总数
+                    altRows: true,//设置为交替行表格,默认为false
+                    // toppager: true,//是否在上面显示浏览导航栏
+                    multiselect: true,//是否多选
+                    multiboxonly: true,//是否只能点击复选框多选
+                    //sortname:'id',//默认的排序列名
+                    //sortorder:'asc',//默认的排序方式（asc升序，desc降序）
+                    caption: "激战2属性组合",//表名
+                    autowidth: true,//自动宽
+                    // scroll:1,
+                    multiSort: true,
+                    caption: "HIDE",
+                    
+                    pager: '#divPaper',//分页、按钮所在的浏览导航栏
+                    rowNum: 40,//每页显示记录数
+                    rowList: [20, 40, 60, 80, 100],//用于改变显示行数的下拉列表框的元素数组。
+                })
+                $("#divItemStats").navGrid("#divPaper", {
+                    add: false,
+                    del: false,
+                    edit: false,
+                    search: true,
+                    refresh: false
+                },
+                {}, // edit options
+                {}, // add options
+                {}, // delete options
+                {multipleSearch: true, multipleGroup:true, showQuery: true})
+                $("#divItemStats").jqGrid('filterToolbar', {searchOperators : true})
+                
+                Bind(BindData)
+            }
+        }
+
+        var interval = setInterval(ShowPlaceholder, 3000)
+    </script>
+    <style>
+        .ui-jqgrid tr.jqgrow td {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .ui-jqgrid .ui-jqgrid-htable .ui-th-div {
+            height: 30px;
+        }
+        .ui-jqgrid .ui-pg-selbox {
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <table id="divItemStats"></table>
+    <div id="divPaper"></div>
+</body>
+</html>
